@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gold Purity Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 520px; margin: auto; }
+    input, select, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; }
+    button { background: #c99700; color: white; border: none; border-radius: 6px; }
+    .result { background: #f6f6f6; padding: 15px; margin-top: 15px; border-radius: 8px; }
+    h2 { color: #9b7400; }
+  </style>
+</head>
+<body>
+
+  <h2>Gold Purity Alloy Calculator</h2>
+
+  <label>Gold Weight (grams)</label>
+  <input type="number" id="weight" step="0.001" placeholder="Example: 23.017">
+
+  <label>Current Gold Purity (%)</label>
+  <input type="number" id="currentPurity" step="0.01" placeholder="Example: 99.40">
+
+  <label>Target Gold Purity (%)</label>
+  <input type="number" id="targetPurity" step="0.01" placeholder="Example: 91.60">
+
+  <label>Silver % in added alloy</label>
+  <input type="number" id="silverPercent" step="0.01" value="50">
+
+  <label>Copper % in added alloy</label>
+  <input type="number" id="copperPercent" step="0.01" value="50">
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function calculate() {
+      const weight = parseFloat(document.getElementById("weight").value);
+      const currentPurity = parseFloat(document.getElementById("currentPurity").value);
+      const targetPurity = parseFloat(document.getElementById("targetPurity").value);
+      const silverPercent = parseFloat(document.getElementById("silverPercent").value);
+      const copperPercent = parseFloat(document.getElementById("copperPercent").value);
+
+      if (!weight || !currentPurity || !targetPurity) {
+        document.getElementById("result").innerHTML = "Please enter all required values.";
+        return;
+      }
+
+      if (targetPurity >= currentPurity) {
+        document.getElementById("result").innerHTML = "Target purity must be lower than current purity.";
+        return;
+      }
+
+      if ((silverPercent + copperPercent) !== 100) {
+        document.getElementById("result").innerHTML = "Silver % + Copper % must equal 100%.";
+        return;
+      }
+
+      const pureGold = weight * currentPurity / 100;
+      const finalWeight = pureGold / (targetPurity / 100);
+      const alloyToAdd = finalWeight - weight;
+
+      const silverToAdd = alloyToAdd * silverPercent / 100;
+      const copperToAdd = alloyToAdd * copperPercent / 100;
+
+      const impurityPercent = 100 - targetPurity;
+
+      document.getElementById("result").innerHTML = `
+        <b>Pure Gold Content:</b> ${pureGold.toFixed(3)} g<br><br>
+        <b>Final Total Weight:</b> ${finalWeight.toFixed(3)} g<br>
+        <b>Total Alloy to Add:</b> ${alloyToAdd.toFixed(3)} g<br><br>
+
+        <b>Silver to Add:</b> ${silverToAdd.toFixed(3)} g<br>
+        <b>Copper to Add:</b> ${copperToAdd.toFixed(3)} g<br><br>
+
+        <b>Final Gold Purity:</b> ${targetPurity.toFixed(2)}%<br>
+        <b>Total Impurity:</b> ${impurityPercent.toFixed(2)}%<br>
+        <b>Silver in Added Alloy:</b> ${silverPercent.toFixed(2)}%<br>
+        <b>Copper in Added Alloy:</b> ${copperPercent.toFixed(2)}%
+      `;
+    }
+  </script>
+
+</body>
+</html>
